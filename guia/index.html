@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>video-explicativo — do assunto ao vídeo narrado, sem chave de API</title>
+<meta name="description" content="Skill que cria vídeos explicativos completos em PT-BR (HTML→MP4 via HyperFrames) a partir de um assunto: roteiro, narração TTS local, cenas animadas dark premium, captions e CTA do INEMA.CLUB, em 16:9 e 9:16.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0c10; --bg2:#14141b; --card:#16161e; --line:#272730;
+    --txt:#e9e9ee; --mut:#9a9aa6; --amb:#E2A23B; --amb2:#f0c070; --sky:#38bdf8; --pro:#cbd5e1;
+    color-scheme:dark;
+  }
+  body.light{
+    --bg:#f6f7f9; --bg2:#eceef2; --card:#ffffff; --line:#e1e3ea;
+    --txt:#1a1a22; --mut:#5b5b68; --amb:#b9791d; --amb2:#a16207; --sky:#0369a1; --pro:#b45309;
+    color-scheme:light;
+  }
+  body.light .hero .glow{opacity:.5}
+  body.light pre{background:#0e0e14;color:#d6d6e0}
+  body.light pre .c{color:#8a8a98}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:Sora,sans-serif;line-height:1.15;margin:0}
+  a{color:var(--amb);text-decoration:none}
+  code,pre{font-family:"JetBrains Mono",monospace}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+  .mut{color:var(--mut)} .amb{color:var(--amb)}
+  .chip{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amb);font-weight:600;font-family:Sora}
+  nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(12px);background:rgba(12,12,16,.78);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
+  nav .brand{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;letter-spacing:-.02em;color:var(--amb)}
+  nav .brand .emoji{font-size:1.25rem}
+  nav .sep{color:var(--mut);opacity:.45}
+  nav .inema{color:var(--sky);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .inema:hover{filter:brightness(1.15)}
+  nav .pro{color:var(--pro);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .pro:hover{filter:brightness(1.15)}
+  nav .clubpro{display:inline-flex;align-items:center;gap:6px}
+  nav .links{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.92rem}
+  nav .links a.sec{color:var(--mut)} nav .links a.sec:hover{color:var(--txt)}
+  .tgl{background:var(--bg2);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem}
+  .tgl:hover{border-color:var(--amb)}
+  .btn{display:inline-block;background:var(--amb);color:#1a1206;font-weight:600;padding:.6em 1.05em;border-radius:10px;font-family:Sora}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  @media(max-width:760px){nav .links a.sec{display:none}}
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero .glow{position:absolute;inset:-40% -20% auto auto;width:70%;height:600px;background:radial-gradient(closest-side,rgba(226,162,59,.22),transparent 70%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:74px 22px}
+  .hero h1{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;letter-spacing:-.025em}
+  .hero p.lead{font-size:1.18rem;color:var(--mut);margin:1.1em 0 1.6em;max-width:34ch}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
+  .hero figure img{width:100%;display:block}
+  @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:48px 22px}}
+  section{padding:62px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
+  section .sub{color:var(--mut);margin:.6em 0 2em;max-width:62ch}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h3{font-size:1.05rem;margin-bottom:.4em}
+  .card p{color:var(--mut);font-size:.92rem;margin:0}
+  .num{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;background:rgba(226,162,59,.14);color:var(--amb);font-family:Sora;font-weight:800;font-size:.9rem;margin-bottom:.7em}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .flow span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:.45em .9em;font-size:.85rem;font-family:Sora;font-weight:600}
+  .flow .arr{color:var(--amb);border:none;background:none;padding:0 .1em}
+  pre{background:#0a0a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font-size:.86rem;line-height:1.6;color:#d6d6e0}
+  pre .c{color:#6f6f7c} pre .k{color:var(--amb2)} pre .s{color:#9ece6a}
+  .step{display:grid;grid-template-columns:46px 1fr;gap:16px;margin-bottom:26px}
+  .step .b{width:46px;height:46px;border-radius:12px;background:var(--amb);color:#1a1206;font-family:Sora;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:1.12rem;margin-bottom:.3em}
+  .step p{color:var(--mut);margin:.2em 0 .7em}
+  .ex{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:680px){.ex{grid-template-columns:1fr}}
+  .ex figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  .ex figure img{width:100%;display:block}
+  .ex figcaption{padding:12px 14px;font-size:.88rem;color:var(--mut);background:var(--card)}
+  .phase{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .phase:last-child{border:none}
+  .phase .tag{flex:0 0 92px;font-family:Sora;font-weight:800;color:var(--amb)}
+  .phase .d strong{display:block;margin-bottom:.2em}
+  .phase .d span{color:var(--mut);font-size:.92rem}
+  footer{padding:46px 0;text-align:center;color:var(--mut);font-size:.9rem}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.3em .8em;font-size:.78rem;color:var(--mut);margin:0 4px}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top"><span class="emoji">🎬</span> video-explicativo</a>
+  <span class="sep">|</span>
+  <span class="clubpro">
+    <a class="inema" href="https://inema.club" target="_blank" rel="noopener">INEMA.CLUB</a>
+    <span class="sep">-</span>
+    <a class="pro" href="https://inema.pro" target="_blank" rel="noopener">PRO</a>
+  </span>
+  <div class="links">
+    <a class="sec" href="#oque">O que é</a>
+    <a class="sec" href="#fluxo">Como funciona</a>
+    <a class="sec" href="#guia">Guia de uso</a>
+    <a class="sec" href="#exemplos">Exemplos</a>
+    <a class="sec" href="#roadmap">Roadmap</a>
+    <button class="tgl" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">🌙</button>
+    <a class="btn" href="https://github.com/inematds/video-explicativo" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="glow"></div>
+  <div class="wrap">
+    <div>
+      <span class="chip">Skill · Claude Code · HTML→MP4</span>
+      <h1>Do assunto ao <span class="amb">vídeo narrado</span>, sem chave de API.</h1>
+      <p class="lead">Você dá um assunto. A skill escreve o roteiro, grava a locução, anima as cenas e renderiza os MP4 em 16:9 e 9:16 — tudo na sua máquina.</p>
+      <div class="cta">
+        <a class="btn" href="#guia">Começar o guia</a>
+        <a class="btn ghost" href="https://github.com/inematds/video-explicativo" target="_blank" rel="noopener">Ver no GitHub</a>
+      </div>
+    </div>
+    <figure><img src="assets/hero.png" alt="Capa do projeto video-explicativo"></figure>
+  </div>
+</header>
+
+<section id="oque"><div class="wrap">
+  <span class="chip">O que é</span>
+  <h2>Uma skill que empacota o pipeline inteiro de vídeo explicativo</h2>
+  <p class="sub">Não é um gerador de vídeo por IA. É um pipeline determinístico: HTML animado + Chrome headless + FFmpeg, orquestrado pelo <a href="https://github.com/heygen-com/hyperframes" target="_blank" rel="noopener">HyperFrames</a>, com narração TTS local. O resultado é sempre PT-BR, dark premium âmbar, e termina na CTA do INEMA.CLUB.</p>
+  <div class="grid g3">
+    <div class="card"><h3>🔒 100% local, sem chave de API</h3><p>Chrome headless + FFmpeg renderizam o vídeo; a narração sai do inemavox (voz <code>bella</code>) com Kokoro <code>pf_dora</code> como fallback. Nada sai da máquina.</p></div>
+    <div class="card"><h3>📐 Data-driven, nº de cenas dinâmico</h3><p>O gerador lê o array <code>SCENES[]</code>: uma entrada por beat do roteiro. Range saudável 4–12 cenas de conteúdo — o assunto decide, não um template travado.</p></div>
+    <div class="card"><h3>📱 16:9 e 9:16 na mesma base</h3><p>O mesmo gerador escreve os dois formatos (<code>--vertical</code> para Shorts/Reels), com safe zones da UI dos apps e título persistente de 2 linhas no vertical.</p></div>
+  </div>
+</div></section>
+
+<section id="fluxo"><div class="wrap">
+  <span class="chip">Como funciona</span>
+  <h2>Oito etapas, sempre nesta ordem</h2>
+  <p class="sub">O timing é fonte única: cada cena declara a duração REAL do seu WAV (medida com <code>ffprobe</code>), e o gerador deriva dali tanto os <code>data-start/duration</code> quanto os tempos dos tweens — áudio e animação nunca desencontram.</p>
+  <div class="flow">
+    <span>Roteiro</span><span class="arr">→</span>
+    <span>Revisão de texto</span><span class="arr">→</span>
+    <span>Projeto</span><span class="arr">→</span>
+    <span>Fontes</span><span class="arr">→</span>
+    <span>Narração</span><span class="arr">→</span>
+    <span>Composição</span><span class="arr">→</span>
+    <span>Validar</span><span class="arr">→</span>
+    <span>Render</span>
+  </div>
+  <div class="grid g3" style="margin-top:30px">
+    <div class="card"><h3>✍️ Texto (1–2)</h3><p>Roteiro com gancho na cena 1 e revisão em duas formas por frase: <b>tela</b> (PT-BR acentuado, inglês na grafia original) e <b>fala</b> (siglas expandidas, inglês fonético — <code>deploy</code> → "deplói").</p></div>
+    <div class="card"><h3>🎙️ Áudio (3–5)</h3><p>Projeto criado em <code>~/projetos/output/&lt;nome&gt;/</code>, fontes baixadas como <code>.woff2</code> local, e um WAV por cena gerado pelo <code>narration.sh</code>.</p></div>
+    <div class="card"><h3>🎞️ Vídeo (6–8)</h3><p>Composição a partir do vocabulário de movimento <code>M.*</code>, lint + inspect de layout, render em <code>draft</code> para conferir e <code>high</code> para entregar.</p></div>
+  </div>
+</div></section>
+
+<section id="pre"><div class="wrap">
+  <span class="chip">Pré-requisitos</span>
+  <h2>O que precisa estar na máquina</h2>
+  <p class="sub">Tudo roda local. Se algo falhar, <code>npx hyperframes doctor</code> aponta o que está faltando.</p>
+  <div class="grid g3">
+    <div class="card"><h3>Node 22+ e FFmpeg</h3><p>FFmpeg em <code>C:\ffmpeg\bin</code>. No git-bash use sempre <code>-nostdin</code>, senão o comando sai com exit 0 sem gerar arquivo.</p><pre><span class="c"># confira a versão</span>
+<span class="k">node</span> -v
+<span class="k">ffmpeg</span> -nostdin -version</pre></div>
+    <div class="card"><h3>Chrome headless (HyperFrames)</h3><p>O HyperFrames renderiza o HTML num Chrome headless próprio — baixe-o uma vez.</p><pre><span class="c"># baixa o browser do HyperFrames</span>
+<span class="k">npx</span> hyperframes browser ensure
+
+<span class="c"># diagnóstico geral</span>
+<span class="k">npx</span> hyperframes doctor</pre></div>
+    <div class="card"><h3>TTS: inemavox (voz bella)</h3><p>Default da casa. <code>python3</code> do sistema roda o <code>tts_direct.py</code>; o env conda <code>chatterbox</code> é chamado internamente para a transferência de timbre.</p><pre><span class="c"># fallback opcional (Kokoro pf_dora)</span>
+<span class="k">pip</span> install kokoro-onnx soundfile</pre></div>
+  </div>
+</div></section>
+
+<section id="guia"><div class="wrap">
+  <span class="chip">Guia de uso · passo a passo</span>
+  <h2>Do assunto ao MP4</h2>
+  <p class="sub">Os comandos abaixo são os reais da skill. Todo o conteúdo — projeto, assets, áudios, <code>index.html</code> e os MP4 finais — vive numa pasta só: <code>~/projetos/output/&lt;nome&gt;/</code>.</p>
+
+  <div class="step"><div class="b">1</div><div>
+    <h3>Escreva o roteiro (SCRIPT.md)</h3>
+    <p>Um beat por cena, 1–3 frases curtas (~8–15s de voz cada). A cena 1 abre <b>direto no gancho</b> — pergunta afiada, número que choca, promessa concreta ou erro comum. Sem logo, sem "olá pessoal": os ~3s iniciais decidem a retenção. Default de duração quando ninguém pede nada: ~1:40–2:00.</p>
+<pre><span class="c"># arco de referência (funda ou desdobre beats conforme o tema)</span>
+<span class="c"># hook → primeiro princípio → mecânica → conceito-chave →</span>
+<span class="c"># aplicação → avançado → exemplo real → fecho → CTA INEMA.CLUB</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">2</div><div>
+    <h3>Revise o texto antes de gerar áudio e slides</h3>
+    <p>Cada frase tem duas formas. <b>Tela</b> (<code>caption</code> + literais em <code>html(p)</code>): PT-BR com acentuação varrida palavra a palavra, termos em inglês na grafia original. <b>Fala</b> (<code>txt/sN.txt</code>): siglas e URLs expandidas, inglês reescrito foneticamente — o TTS fonemiza pela grafia escrita.</p>
+<pre><span class="c"># tela  →</span> Toda skill começa com o SKILL.md
+<span class="c"># fala  →</span> Toda skiu começa com o SKILL ponto M D
+
+<span class="c"># léxico: deploy→"deplói" · design→"dizáin" · framework→"frêimuork"</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">3</div><div>
+    <h3>Crie o projeto na pasta única</h3>
+    <p>Init do HyperFrames com o exemplo <code>blank</code> (a skill traz o house style próprio). Copie o <code>design.md</code> da referência de house style para a raiz do projeto.</p>
+<pre><span class="k">cd</span> ~/projetos/output
+<span class="k">npx</span> hyperframes init &lt;nome&gt; --example blank --non-interactive</pre>
+  </div></div>
+
+  <div class="step"><div class="b">4</div><div>
+    <h3>Baixe as fontes localmente</h3>
+    <p>Sora, Inter e JetBrains Mono como <code>.woff2</code> (subset latin) + <code>fonts.css</code>. Nunca use Google Fonts via CDN: some no render.</p>
+<pre><span class="c"># copie scripts/fetch-fonts.mjs para o projeto e rode</span>
+<span class="k">node</span> fetch-fonts.mjs   <span class="c"># → assets/fonts/*.woff2 + fonts.css</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">5</div><div>
+    <h3>Gere a narração (voz bella)</h3>
+    <p>Copie <code>scripts/narration-template.sh</code> como <code>assets/narration.sh</code>, escreva os <code>txt/sN.txt</code> na forma-fala e rode. Ele itera sobre todos os <code>sN.txt</code> que existirem, tenta a <code>bella</code> via inemavox e cai no Kokoro por cena se falhar.</p>
+<pre><span class="k">bash</span> assets/narration.sh   <span class="c"># → assets/audio/sN.wav</span>
+
+<span class="c"># meça a duração REAL de cada WAV (vai para o campo `audio` da cena)</span>
+<span class="k">ffprobe</span> -v error -show_entries format=duration \
+  -of default=noprint_wrappers=1:nokey=1 assets/audio/s1.wav</pre>
+  </div></div>
+
+  <div class="step"><div class="b">6</div><div>
+    <h3>Componha as cenas</h3>
+    <p>Copie <code>scripts/composition-template.mjs</code> como <code>build-index.mjs</code> e edite o array <code>SCENES[]</code> — uma entrada por cena, cada uma <code>{ audio, caption, html(p), anim(at,p) }</code>. A CTA do INEMA.CLUB já vem anexada como última cena. No 9:16, defina <code>TITLE</code> com persona + gancho.</p>
+<pre><span class="k">const</span> TITLE = { l1: <span class="s">"PROFISSIONAL &lt;b&gt;LIBERAL&lt;/b&gt;"</span>,
+                l2: <span class="s">"por que ainda faz tudo &lt;b&gt;sozinho?&lt;/b&gt;"</span> };
+
+<span class="c">// a CTA é sempre a última — não remover</span>
+<span class="k">const</span> ALL = [...SCENES, CTA];</pre>
+  </div></div>
+
+  <div class="step"><div class="b">7</div><div>
+    <h3>Valide antes de renderizar</h3>
+    <p>O lint precisa dar 0 erros e o inspect 0 problemas de layout. Não deixe dois <code>index*.html</code> na raiz — o lint acusa <code>multiple_root_compositions</code>.</p>
+<pre><span class="k">npx</span> hyperframes lint                  <span class="c"># 0 erros</span>
+<span class="k">npx</span> hyperframes inspect --samples 16  <span class="c"># 0 problemas de layout</span></pre>
+  </div></div>
+
+  <div class="step"><div class="b">8</div><div>
+    <h3>Renderize os dois formatos</h3>
+    <p>Renderize logo após gerar cada modo — o gerador sempre escreve <code>index.html</code>. Um arquivo por formato, e só: o render já é a entrega, sem cópia comprimida ao lado. Confira frames em <code>draft</code> antes do <code>high</code>.</p>
+<pre><span class="k">node</span> build-index.mjs           &amp;&amp; <span class="k">npx</span> hyperframes render --quality high --output &lt;nome&gt;-16x9.mp4
+<span class="k">node</span> build-index.mjs --vertical &amp;&amp; <span class="k">npx</span> hyperframes render --quality high --output &lt;nome&gt;-9x16.mp4
+
+<span class="c"># extrair um frame para conferência</span>
+<span class="k">ffmpeg</span> -nostdin -y -ss 12 -i &lt;nome&gt;-16x9.mp4 -vframes 1 -update 1 frame.png</pre>
+  </div></div>
+</div></section>
+
+<section id="exemplos"><div class="wrap">
+  <span class="chip">Exemplos</span>
+  <h2>O que a skill já produziu</h2>
+  <p class="sub">Casos reais que validaram cada recurso do pipeline — e o curso publicado sobre a própria skill.</p>
+  <div class="grid g2">
+    <div class="card">
+      <h3>🎓 Curso: Skills no Claude Code</h3>
+      <p>O exemplo que acompanha o <code>narration-template.sh</code>: 8 cenas + CTA explicando o que são Skills, do <code>SKILL.md</code> à divulgação progressiva. O curso completo sobre esta skill está publicado em <a href="https://inematds.github.io/skill-video-explicativo/" target="_blank" rel="noopener">skill-video-explicativo</a>.</p>
+    </div>
+    <div class="card">
+      <h3>💼 Piloto "Liberal v1"</h3>
+      <p>Caso que validou o título persistente de 2 linhas no 9:16 (v1.10.3): <code>l1</code> = "PROFISSIONAL LIBERAL" (persona), <code>l2</code> = "por que ainda faz tudo sozinho?" (gancho). Fixo no topo o vídeo todo, sumindo na CTA.</p>
+    </div>
+    <div class="card">
+      <h3>📊 hormozi-12-dicas</h3>
+      <p>Origem das safe zones do 9:16 (v1.5.0/1.5.1): mensagem no meio, mídia como faixa de topo entrando da direita, caption oculta no vertical — base livre para a UI do app.</p>
+    </div>
+    <div class="card">
+      <h3>🎞️ Variações (2–3 versões)</h3>
+      <p>Variação é outro ângulo do mesmo assunto — didático vs. caso real vs. contrarian vs. lista — com roteiro, gancho e narração próprios. Cada uma gera os dois formatos: <code>&lt;nome&gt;-v1-16x9.mp4</code>, <code>&lt;nome&gt;-v2-16x9.mp4</code>…</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="roadmap"><div class="wrap">
+  <span class="chip">Roadmap</span>
+  <h2>Como a skill chegou na 1.10.3</h2>
+  <p class="sub">Versionamento <code>v1.yy.xxx</code> — <code>yy</code> = recurso, <code>xxx</code> = correção. Histórico completo no <a href="https://github.com/inematds/video-explicativo/blob/main/skills/video-explicativo/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG.md</a>.</p>
+  <div class="phase"><div class="tag">1.0.0</div><div class="d"><strong>Release inicial</strong><span>Pipeline HTML→MP4 (HyperFrames + Kokoro TTS local), house style dark premium âmbar, 16:9 e 9:16.</span></div></div>
+  <div class="phase"><div class="tag">1.2.0</div><div class="d"><strong>Cenas data-driven + mid-scene activity</strong><span>O nº de cenas passa a sair do roteiro (<code>SCENES[]</code>), CTA anexada automaticamente e câmera Ken Burns em toda cena — fim do slideshow.</span></div></div>
+  <div class="phase"><div class="tag">1.3.0</div><div class="d"><strong>Linguagem de movimento</strong><span>Vocabulário <code>M.*</code> (<code>reveal/sweep/type/float/pulse/glow/countUp</code>) no lugar de tweens improvisados, com deslocamentos menores no 9:16.</span></div></div>
+  <div class="phase"><div class="tag">1.4.0</div><div class="d"><strong>Transições entre cenas</strong><span>Mapa <code>TRANS</code> em GSAP: <code>fade</code> (default), <code>push</code>, <code>slideUp</code>, <code>zoom</code>, <code>wipe</code>, <code>fadeBlack</code> — especiais só em 2–3 momentos-chave.</span></div></div>
+  <div class="phase"><div class="tag">1.5.x</div><div class="d"><strong>Safe zones, fallback SVG e saída única</strong><span>Layout vertical validado, imagem raster vira opcional (SVG cobre), fim da cauda muda e um único MP4 por formato — sem cópia <code>-FINAL</code>.</span></div></div>
+  <div class="phase"><div class="tag">1.6.3</div><div class="d"><strong>Revisão de texto + pronúncia de inglês</strong><span>Nova etapa antes dos WAVs: duas formas por frase (tela vs. fala) e léxico de inglês fonético.</span></div></div>
+  <div class="phase"><div class="tag">1.7.3</div><div class="d"><strong>Gancho, áudio sob a voz e legibilidade</strong><span>Quatro comportamentos viram contrato: gancho de abertura, música baixa (<code>MUSIC_VOL ~0.14</code>), scrim/blur/painel sob texto, e o que é uma variação.</span></div></div>
+  <div class="phase"><div class="tag">1.8.3</div><div class="d"><strong>Voz bella como default</strong><span>Narração passa a usar a voz da casa via inemavox (<code>chatterbox-vc</code>); Kokoro <code>pf_dora</code> vira fallback automático por cena.</span></div></div>
+  <div class="phase"><div class="tag">1.10.3</div><div class="d"><strong>Título do 9:16 em 2 linhas</strong><span>Versão atual. <code>TITLE = { l1, l2 }</code> — persona + curiosidade, fixo no topo do vertical e sumindo na CTA, fechando o loop de retenção.</span></div></div>
+</div></section>
+
+<footer>
+  <div class="wrap">
+    <div class="pill">HyperFrames</div><div class="pill">Chrome headless</div><div class="pill">FFmpeg</div><div class="pill">GSAP</div><div class="pill">inemavox · bella</div><div class="pill">Kokoro TTS</div><div class="pill">Node 22+</div>
+    <p style="margin-top:18px">video-explicativo · skill de vídeo explicativo PT-BR, 100% local ·
+      <a href="https://github.com/inematds/video-explicativo">inematds/video-explicativo</a> ·
+      <a href="https://inematds.github.io/skill-video-explicativo/">curso</a> ·
+      <a href="https://inema.club">INEMA.CLUB</a></p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var KEY='video-explicativo-theme';
+    var b=document.body, t=document.getElementById('themeToggle');
+    if(localStorage.getItem(KEY)==='light'){ b.classList.add('light'); t.textContent='☀️'; }
+    t.addEventListener('click',function(){
+      var light=b.classList.toggle('light');
+      t.textContent=light?'☀️':'🌙';
+      localStorage.setItem(KEY, light?'light':'dark');
+    });
+  })();
+</script>
+</body>
+</html>
