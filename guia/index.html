@@ -173,9 +173,31 @@
 
 <span class="c"># diagnóstico geral</span>
 <span class="k">npx</span> hyperframes doctor</pre></div>
-    <div class="card"><h3>TTS: inemavox (voz bella)</h3><p>Default da casa. <code>python3</code> do sistema roda o <code>tts_direct.py</code>; o env conda <code>chatterbox</code> é chamado internamente para a transferência de timbre.</p><pre><span class="c"># fallback opcional (Kokoro pf_dora)</span>
+    <div class="card"><h3>TTS: inemavox (voz bella)</h3><p>Default da casa — <b>pede GPU</b>. <code>python3</code> do sistema roda o <code>tts_direct.py</code>; o env conda <code>chatterbox</code> é chamado internamente para a transferência de timbre.</p><pre><span class="c"># fallback opcional (Kokoro pf_dora)</span>
 <span class="k">pip</span> install kokoro-onnx soundfile</pre></div>
   </div>
+
+  <h3 style="margin-top:2.2rem">Não tem GPU? Dá pra rodar tudo assim mesmo</h3>
+  <p class="sub">O render (Chrome headless + FFmpeg) <b>nunca</b> precisou de GPU. Só duas peças do fluxo default puxam hardware extra — e as duas têm substituto direto.</p>
+  <div class="grid g3">
+    <div class="card"><h3>🎙️ Narração → edge-tts</h3><p>Sintetiza na nuvem da Microsoft, sem chave e sem modelo local. <b>Liste e escute as vozes antes</b> de gerar o vídeo inteiro — trocar de voz no meio é retrabalho.</p><pre><span class="c"># instalar e ver as vozes PT-BR</span>
+<span class="k">pip</span> install edge-tts
+<span class="k">edge-tts</span> --list-voices | grep pt-BR
+
+<span class="c"># amostra de 1 frase, para escutar</span>
+<span class="k">edge-tts</span> --voice pt-BR-FranciscaNeural \
+  --text "Teste de voz." --write-media amostra.mp3</pre></div>
+    <div class="card"><h3>🔌 Narração offline → Kokoro</h3><p>Modelo ONNX pequeno, roda em <b>CPU</b>, sem internet. Vozes PT: <code>pf_dora</code> (F), <code>pm_alex</code> e <code>pm_santa</code> (M). Mesma regra: gere uma frase com cada candidata e escolha ouvindo.</p><pre><span class="k">pip</span> install kokoro-onnx soundfile
+
+<span class="c"># o timing do vídeo vem do áudio real</span>
+<span class="k">ffprobe</span> -v error -show_entries format=duration \
+  -of csv=p=0 assets/audio/s1.wav</pre></div>
+    <div class="card"><h3>🖼️ Imagens → Agnes AI</h3><p>No lugar do flux2-klein (difusão local, GPU): o CLI <code>imagens-agnes</code> chama a API da Agnes — <b>US$ 0, sem créditos</b>, nada roda na sua máquina. Prompt <b>em inglês</b> (PT apanha do filtro), no máx. 2 referências, e baixe na hora (a URL expira).</p><pre><span class="k">cd</span> ~/projetos/imagens-agnes
+<span class="k">python3</span> gerar.py "dark premium abstract \
+  data landscape, amber accent" \
+  --ratio 16:9 --size 2K -o s3.png</pre></div>
+  </div>
+  <p class="sub" style="margin-top:1rem">Sem Agnes e sem GPU, o <b>fallback SVG</b> continua valendo: o house-style já é vetorial/CSS, imagem é reforço e não requisito. Detalhes completos em <code>references/sem-gpu.md</code>.</p>
 </div></section>
 
 <section id="guia"><div class="wrap">
@@ -278,7 +300,7 @@
 
 <section id="roadmap"><div class="wrap">
   <span class="chip">Roadmap</span>
-  <h2>Como a skill chegou na 1.10.3</h2>
+  <h2>Como a skill chegou na 1.11.3</h2>
   <p class="sub">Versionamento <code>v1.yy.xxx</code> — <code>yy</code> = recurso, <code>xxx</code> = correção. Histórico completo no <a href="https://github.com/inematds/video-explicativo/blob/main/skills/video-explicativo/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG.md</a>.</p>
   <div class="phase"><div class="tag">1.0.0</div><div class="d"><strong>Release inicial</strong><span>Pipeline HTML→MP4 (HyperFrames + Kokoro TTS local), house style dark premium âmbar, 16:9 e 9:16.</span></div></div>
   <div class="phase"><div class="tag">1.2.0</div><div class="d"><strong>Cenas data-driven + mid-scene activity</strong><span>O nº de cenas passa a sair do roteiro (<code>SCENES[]</code>), CTA anexada automaticamente e câmera Ken Burns em toda cena — fim do slideshow.</span></div></div>
@@ -288,12 +310,13 @@
   <div class="phase"><div class="tag">1.6.3</div><div class="d"><strong>Revisão de texto + pronúncia de inglês</strong><span>Nova etapa antes dos WAVs: duas formas por frase (tela vs. fala) e léxico de inglês fonético.</span></div></div>
   <div class="phase"><div class="tag">1.7.3</div><div class="d"><strong>Gancho, áudio sob a voz e legibilidade</strong><span>Quatro comportamentos viram contrato: gancho de abertura, música baixa (<code>MUSIC_VOL ~0.14</code>), scrim/blur/painel sob texto, e o que é uma variação.</span></div></div>
   <div class="phase"><div class="tag">1.8.3</div><div class="d"><strong>Voz bella como default</strong><span>Narração passa a usar a voz da casa via inemavox (<code>chatterbox-vc</code>); Kokoro <code>pf_dora</code> vira fallback automático por cena.</span></div></div>
-  <div class="phase"><div class="tag">1.10.3</div><div class="d"><strong>Título do 9:16 em 2 linhas</strong><span>Versão atual. <code>TITLE = { l1, l2 }</code> — persona + curiosidade, fixo no topo do vertical e sumindo na CTA, fechando o loop de retenção.</span></div></div>
+  <div class="phase"><div class="tag">1.10.3</div><div class="d"><strong>Título do 9:16 em 2 linhas</strong><span><code>TITLE = { l1, l2 }</code> — persona + curiosidade, fixo no topo do vertical e sumindo na CTA, fechando o loop de retenção.</span></div></div>
+  <div class="phase"><div class="tag">1.11.3</div><div class="d"><strong>Rodar sem GPU</strong><span>Versão atual. Documenta os substitutos de quem não tem GPU: narração por <code>edge-tts</code> ou Kokoro (com validação de voz obrigatória) e imagens pela Agnes AI (US$ 0) no lugar do flux2-klein.</span></div></div>
 </div></section>
 
 <footer>
   <div class="wrap">
-    <div class="pill">HyperFrames</div><div class="pill">Chrome headless</div><div class="pill">FFmpeg</div><div class="pill">GSAP</div><div class="pill">inemavox · bella</div><div class="pill">Kokoro TTS</div><div class="pill">Node 22+</div>
+    <div class="pill">HyperFrames</div><div class="pill">Chrome headless</div><div class="pill">FFmpeg</div><div class="pill">GSAP</div><div class="pill">inemavox · bella</div><div class="pill">Kokoro TTS</div><div class="pill">edge-tts</div><div class="pill">Agnes AI</div><div class="pill">Node 22+</div>
     <p style="margin-top:18px">video-explicativo · skill de vídeo explicativo PT-BR, 100% local ·
       <a href="https://github.com/inematds/video-explicativo">inematds/video-explicativo</a> ·
       <a href="https://inematds.github.io/skill-video-explicativo/">curso</a> ·

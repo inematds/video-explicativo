@@ -74,6 +74,9 @@ Cada um é um `<audio>` irmão com seu `data-start`/`data-duration`/`data-track-
 
 Isso evita recalcular segundos quando o nº/ordem de cenas muda. As cenas têm IDs `s1…sN` (a CTA é o último).
 
+> **Sem GPU para gerar imagem?** Use o CLI **Agnes AI** (`~/projetos/imagens-agnes/gerar.py`, US$ 0,
+> prompt em inglês, `size` em pixels) no lugar do flux2-klein — ver [sem-gpu.md](sem-gpu.md).
+
 ## Fallback SVG (sem servidor/API de imagem) — REGRA
 
 Imagens raster (ex.: flux2-klein via servidor `inemaimg` em `:8000`) são **opcionais, com fallback**. Antes de

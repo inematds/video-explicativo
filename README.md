@@ -33,6 +33,7 @@ skills/video-explicativo/
     clips-midia.md                # vídeo/imagem/música, scrim/blur/painel, ducking
     revisao-texto.md              # checklist de acentuação + léxico de inglês fonético
     gotchas.md                    # pegadinhas do HyperFrames
+    sem-gpu.md                    # rodar sem GPU: edge-tts/Kokoro + imagens via Agnes AI
 ```
 
 ## Instalar
@@ -51,6 +52,19 @@ Depois é só pedir: *"faz um vídeo explicativo sobre X"*.
 - Chrome headless do HyperFrames: `npx hyperframes browser ensure`
 - TTS: inemavox (voz `bella`); fallback Kokoro — `pip install kokoro-onnx soundfile`
 - Diagnóstico: `npx hyperframes doctor`
+
+### Sem GPU?
+
+O render nunca precisou de GPU — só a narração default (inemavox/chatterbox) e a geração de
+imagem local (flux2-klein) pedem. Substitutos diretos:
+
+- **Narração:** `edge-tts` (nuvem, sem chave) ou **Kokoro** (offline, CPU). Em ambos, **liste e
+  escute as vozes antes** de gerar o vídeo inteiro (`edge-tts --list-voices | grep pt-BR`;
+  Kokoro PT: `pf_dora`, `pm_alex`, `pm_santa`).
+- **Imagens:** **Agnes AI** via `~/projetos/imagens-agnes/gerar.py` (US$ 0, prompt em inglês,
+  `size` em pixels, máx. 2 refs) — ou o **fallback SVG**, que dispensa rede e custo.
+
+Receitas completas e regras medidas: [`references/sem-gpu.md`](skills/video-explicativo/references/sem-gpu.md).
 
 ## Saída
 

@@ -2,6 +2,20 @@
 
 Versionamento: **`v1.yy.xxx`** — `yy` = recurso (feature), `xxx` = correção (bug).
 
+## 1.11.3 — Rodar sem GPU (edge-tts / Kokoro + imagens via Agnes AI)
+Documentação para quem instala numa máquina **sem GPU** — nada no pipeline mudou, só ficou explícito
+o que dá para trocar.
+
+- Novo `references/sem-gpu.md`: tabela do que pesa (narração inemavox/chatterbox e imagem flux2-klein)
+  e o substituto de cada um.
+- **Narração:** `edge-tts` (nuvem, sem chave) ou **Kokoro** (offline, CPU) — com o passo obrigatório de
+  **listar e escutar as vozes** antes de gerar o vídeo inteiro (`edge-tts --list-voices | grep pt-BR`;
+  Kokoro PT: `pf_dora`, `pm_alex`, `pm_santa`) e a conversão para WAV mono 24 kHz + `ffprobe` no timing.
+- **Imagens:** CLI `imagens-agnes` (Agnes AI `agnes-image-2.1-flash`, US$ 0) com as regras medidas
+  (~70 chamadas): prompt em inglês, `size` em pixels, máx. 2 refs, ref ≤ 10 MB, retry por causa dos
+  ~34% de 503, URL temporária — e os defeitos do modelo. **Fallback SVG** segue como último recurso.
+- Ponteiros novos em `SKILL.md` (pré-requisitos), `clips-midia.md`, README e na página do guia.
+
 ## 1.10.3 — Título do 9:16 em 2 linhas (persona + gancho)
 Evolução do título persistente (1.9.3): agora são **duas linhas** com a tipografia da casa.
 

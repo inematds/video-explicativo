@@ -1,6 +1,6 @@
 ---
 name: video-explicativo
-version: 1.10.3
+version: 1.11.3
 description: Cria vídeos explicativos completos em PT-BR (HTML→MP4 via HyperFrames) a partir de um assunto — roteiro, narração TTS local, cenas animadas dark premium, captions e CTA do INEMA.CLUB, nos formatos 16:9 (YouTube) e 9:16 (Shorts/Reels). Use quando o usuário pedir para "fazer um vídeo", "vídeo explicativo", "vídeo sobre X", "vídeo pra Shorts/Reels", "mini tutorial em vídeo", "vídeo do INEMA", ou quando der um assunto e quiser um vídeo narrado pronto. Cobre roteiro, locução, animação, render e a CTA final.
 ---
 
@@ -15,6 +15,7 @@ Padrão do usuário (Nei): **PT-BR**, **dark premium** (accent âmbar), gerar **
 - Chrome headless do HyperFrames: `npx hyperframes browser ensure`.
 - TTS: **voz `bella` via inemavox** (default) — `~/projetos/inemavox/tts_direct.py --engine chatterbox-vc --ref <bella.wav>` (roda com `python3` do sistema, que já tem `edge_tts`; usa o env conda `chatterbox` internamente). **Fallback Kokoro** (`pip install kokoro-onnx soundfile`, voz `pf_dora`) só se o inemavox/bella falhar. Ver [scripts/narration-template.sh](scripts/narration-template.sh).
 - Verifique com `npx hyperframes doctor` se algo falhar.
+- **Máquina sem GPU (ou sem inemavox / sem flux2-klein)?** O pipeline não exige GPU. Troque a narração por **edge-tts** (nuvem, sem chave) ou **Kokoro** (offline, CPU) — sempre **listando e testando as vozes** antes de gerar o vídeo inteiro — e as imagens por **Agnes AI** (`~/projetos/imagens-agnes/gerar.py`, US$ 0) ou pelo fallback SVG. Receitas, vozes e regras medidas em [references/sem-gpu.md](references/sem-gpu.md).
 
 ## Plano de cenas (quantas cenas?)
 
