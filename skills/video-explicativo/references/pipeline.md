@@ -11,7 +11,7 @@
   assets/
     narration.sh       # copiar de scripts/narration-template.sh
     txt/sN.txt          # textos da locução
-    audio/sN.wav        # narrações (voz bella / inemavox; Kokoro fallback)
+    audio/sN.wav        # narrações (inemavox chatterbox local, voz nei; Kokoro fallback)
     fonts/*.woff2 + fonts.css
 ```
 > MP4 finais **não** ficam em `renders/` local — vão para a pasta única `~/projetos/output/<nome>/` (ver SKILL.md › Render).
@@ -43,18 +43,20 @@ checklist + léxico de inglês em [revisao-texto.md](revisao-texto.md). Resumo:
 ## Banco de padrões (exemplos oficiais HyperFrames)
 Para inspiração de motion, veja `npx hyperframes init x --example <name>`: `decision-tree` (explainers/tutoriais — nosso caso), `nyt-graph` (data stories/contadores), `kinetic-type` (motion tipográfico), `swiss-grid` (técnico/limpo). A skill usa `blank` + house style dark premium próprio, mas esses exemplos são ótimos para copiar ideias de animação.
 
-## Narração (voz `bella` via inemavox · Kokoro fallback)
-Default = **voz `bella`** (clone via inemavox `chatterbox-vc`: Edge TTS gera a fala, o Chatterbox transfere o timbre da `bella.wav`). O template `narration.sh` já faz isso e cai no Kokoro só se o inemavox falhar.
+## Narração (inemavox `chatterbox` local · Kokoro fallback)
+Default = **voz `nei`** com o engine **`chatterbox`** (clone local do timbre a partir do WAV de referência; nada vai para a nuvem).
+`VOZ=rachel` troca para a voz padrão global — é inglesa: gere uma amostra em PT e peça o usuário ouvir antes do vídeo inteiro.
+**Não use `chatterbox-vc`**: ele gera a fala no Edge TTS (serviço externo) e só depois troca o timbre.
 ```bash
-# bella (inemavox): grava sempre <outdir>/generated.wav → renomear para sN.wav
 python3 ~/projetos/inemavox/tts_direct.py \
   --text "$(cat assets/txt/s1.txt)" --lang pt \
-  --engine chatterbox-vc --ref ~/projetos/timesmkt3/media/voice-refs/bella.wav \
+  --engine chatterbox --ref ~/projetos/timesmkt3/media/voice-refs/nei.wav \
   --outdir /tmp/tts_s1 && mv -f /tmp/tts_s1/generated.wav assets/audio/s1.wav
 ```
-- `python3` do sistema roda o `tts_direct.py` (tem `edge_tts`); o env conda `chatterbox` (`/home/nmaldaner/miniconda3/envs/chatterbox/bin/python3`) é chamado internamente para a conversão de timbre.
-- **Fallback Kokoro** (só se inemavox/bella falhar): `npx hyperframes tts "assets/txt/s1.txt" --voice pf_dora --speed 0.98 --output assets/audio/s1.wav`. Voz `pf_dora` = PT-BR feminina; 1ª execução baixa ~340MB.
-- Prático: rode `bash assets/narration.sh` — ele já tenta `bella` e faz o fallback por cena, iterando sobre todos os `sN.txt`.
+- O chatterbox já gravou silêncio "com sucesso" no passado: o template mede o volume de cada WAV e acusa áudio mudo.
+- **Checagem por transcrição:** `python3 scripts/verify_narration.py <projeto>` transcreve localmente (Whisper do inemavox) e imprime o texto de cada `sN.wav` ao lado do `sN.txt`. Serve para achar palavra sumida, repetida ou trocada; **não aprova pronúncia** — o usuário ouve.
+- **Fallback Kokoro** (só se o inemavox falhar): `npx hyperframes tts "assets/txt/s1.txt" --voice pf_dora --speed 0.98 --output assets/audio/s1.wav`.
+- Prático: `bash assets/narration.sh` (ou `VOZ=rachel bash assets/narration.sh`).
 - Medir durações: `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 assets/audio/sN.wav`.
 
 ## Timing (no gerador)

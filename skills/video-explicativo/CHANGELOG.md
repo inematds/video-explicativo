@@ -2,6 +2,20 @@
 
 Versionamento: **`v1.yy.xxx`** — `yy` = recurso (feature), `xxx` = correção (bug).
 
+## 1.12.3 — Não é ferramenta de reel; voz local; protótipo antes de lote
+Correção depois dos 5 "vídeos virais" reprovados em 28/09/2026 (análise em `~/projetos/wifi/ANALISE-ERROS-VIDEOS-VIRAIS-2026-09-29.md`
+e revisão do Codex Astra em `~/projetos/wifi/docs/revisao-astra-proposta-reels-2026-09-29.md`).
+
+- **Descrição e gatilhos:** saem "Shorts/Reels"; a skill é para explicativo narrado de 1–3 min. Reel/short/viral →
+  `makeshorts` com o explicavideos 9:16 (`"reel_profile"`) como motor. Aviso no topo do `SKILL.md`.
+- **Voz:** padrão `nei` com o engine `chatterbox` **local**; `rachel` só após amostra ouvida; `chatterbox-vc`
+  removido (gera a fala no Edge TTS, nuvem). Template acusa WAV mudo. `sem-gpu.md`: edge-tts só com autorização.
+- **`scripts/verify_narration.py`:** transcrição local (Whisper do inemavox) por cena, lado a lado com o `sN.txt`;
+  marca palavra sumida, balbucio no fim e cena vazia. Ajuda, não aprova pronúncia.
+- **Duração:** "1:40–2:00" deixa de ser chamado de "bom pra Shorts"; reel segue os perfis do makeshorts.
+- **Protótipo antes de lote:** 1 vídeo completo aprovado antes de variações, publicação ou envio.
+- Não foi criado um "modo reel" aqui (a revisão mostrou que duplicaria legenda, layout e QA do explicavideos).
+
 ## 1.11.3 — Rodar sem GPU (edge-tts / Kokoro + imagens via Agnes AI)
 Documentação para quem instala numa máquina **sem GPU** — nada no pipeline mudou, só ficou explícito
 o que dá para trocar.

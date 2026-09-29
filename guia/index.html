@@ -133,9 +133,9 @@
   <h2>Uma skill que empacota o pipeline inteiro de vídeo explicativo</h2>
   <p class="sub">Não é um gerador de vídeo por IA. É um pipeline determinístico: HTML animado + Chrome headless + FFmpeg, orquestrado pelo <a href="https://github.com/heygen-com/hyperframes" target="_blank" rel="noopener">HyperFrames</a>, com narração TTS local. O resultado é sempre PT-BR, dark premium âmbar, e termina na CTA do INEMA.CLUB.</p>
   <div class="grid g3">
-    <div class="card"><h3>🔒 100% local, sem chave de API</h3><p>Chrome headless + FFmpeg renderizam o vídeo; a narração sai do inemavox (voz <code>bella</code>) com Kokoro <code>pf_dora</code> como fallback. Nada sai da máquina.</p></div>
+    <div class="card"><h3>🔒 100% local, sem chave de API</h3><p>Chrome headless + FFmpeg renderizam o vídeo; a narração sai do inemavox local (engine <code>chatterbox</code>, voz <code>nei</code>) com Kokoro <code>pf_dora</code> como fallback. Nada sai da máquina.</p></div>
     <div class="card"><h3>📐 Data-driven, nº de cenas dinâmico</h3><p>O gerador lê o array <code>SCENES[]</code>: uma entrada por beat do roteiro. Range saudável 4–12 cenas de conteúdo — o assunto decide, não um template travado.</p></div>
-    <div class="card"><h3>📱 16:9 e 9:16 na mesma base</h3><p>O mesmo gerador escreve os dois formatos (<code>--vertical</code> para Shorts/Reels), com safe zones da UI dos apps e título persistente de 2 linhas no vertical.</p></div>
+    <div class="card"><h3>📱 16:9 e 9:16 na mesma base</h3><p>O mesmo gerador escreve os dois formatos (<code>--vertical</code>: versão vertical do explicativo — reel de verdade é no makeshorts + explicavideos 9:16), com safe zones da UI dos apps e título persistente de 2 linhas no vertical.</p></div>
   </div>
 </div></section>
 
@@ -173,7 +173,7 @@
 
 <span class="c"># diagnóstico geral</span>
 <span class="k">npx</span> hyperframes doctor</pre></div>
-    <div class="card"><h3>TTS: inemavox (voz bella)</h3><p>Default da casa — <b>pede GPU</b>. <code>python3</code> do sistema roda o <code>tts_direct.py</code>; o env conda <code>chatterbox</code> é chamado internamente para a transferência de timbre.</p><pre><span class="c"># fallback opcional (Kokoro pf_dora)</span>
+    <div class="card"><h3>TTS: inemavox local (voz nei)</h3><p>Default da casa — <b>pede GPU</b>. <code>python3</code> do sistema roda o <code>tts_direct.py</code>; o env conda <code>chatterbox</code> é chamado internamente para a transferência de timbre.</p><pre><span class="c"># fallback opcional (Kokoro pf_dora)</span>
 <span class="k">pip</span> install kokoro-onnx soundfile</pre></div>
   </div>
 
@@ -237,8 +237,8 @@
   </div></div>
 
   <div class="step"><div class="b">5</div><div>
-    <h3>Gere a narração (voz bella)</h3>
-    <p>Copie <code>scripts/narration-template.sh</code> como <code>assets/narration.sh</code>, escreva os <code>txt/sN.txt</code> na forma-fala e rode. Ele itera sobre todos os <code>sN.txt</code> que existirem, tenta a <code>bella</code> via inemavox e cai no Kokoro por cena se falhar.</p>
+    <h3>Gere a narração (voz nei, local)</h3>
+    <p>Copie <code>scripts/narration-template.sh</code> como <code>assets/narration.sh</code>, escreva os <code>txt/sN.txt</code> na forma-fala e rode. Ele itera sobre todos os <code>sN.txt</code> que existirem, tenta a voz <code>nei</code> no inemavox local e cai no Kokoro por cena se falhar.</p>
 <pre><span class="k">bash</span> assets/narration.sh   <span class="c"># → assets/audio/sN.wav</span>
 
 <span class="c"># meça a duração REAL de cada WAV (vai para o campo `audio` da cena)</span>
@@ -300,7 +300,7 @@
 
 <section id="roadmap"><div class="wrap">
   <span class="chip">Roadmap</span>
-  <h2>Como a skill chegou na 1.11.3</h2>
+  <h2>Como a skill chegou na 1.12.3</h2>
   <p class="sub">Versionamento <code>v1.yy.xxx</code> — <code>yy</code> = recurso, <code>xxx</code> = correção. Histórico completo no <a href="https://github.com/inematds/video-explicativo/blob/main/skills/video-explicativo/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG.md</a>.</p>
   <div class="phase"><div class="tag">1.0.0</div><div class="d"><strong>Release inicial</strong><span>Pipeline HTML→MP4 (HyperFrames + Kokoro TTS local), house style dark premium âmbar, 16:9 e 9:16.</span></div></div>
   <div class="phase"><div class="tag">1.2.0</div><div class="d"><strong>Cenas data-driven + mid-scene activity</strong><span>O nº de cenas passa a sair do roteiro (<code>SCENES[]</code>), CTA anexada automaticamente e câmera Ken Burns em toda cena — fim do slideshow.</span></div></div>
@@ -311,12 +311,13 @@
   <div class="phase"><div class="tag">1.7.3</div><div class="d"><strong>Gancho, áudio sob a voz e legibilidade</strong><span>Quatro comportamentos viram contrato: gancho de abertura, música baixa (<code>MUSIC_VOL ~0.14</code>), scrim/blur/painel sob texto, e o que é uma variação.</span></div></div>
   <div class="phase"><div class="tag">1.8.3</div><div class="d"><strong>Voz bella como default</strong><span>Narração passa a usar a voz da casa via inemavox (<code>chatterbox-vc</code>); Kokoro <code>pf_dora</code> vira fallback automático por cena.</span></div></div>
   <div class="phase"><div class="tag">1.10.3</div><div class="d"><strong>Título do 9:16 em 2 linhas</strong><span><code>TITLE = { l1, l2 }</code> — persona + curiosidade, fixo no topo do vertical e sumindo na CTA, fechando o loop de retenção.</span></div></div>
-  <div class="phase"><div class="tag">1.11.3</div><div class="d"><strong>Rodar sem GPU</strong><span>Versão atual. Documenta os substitutos de quem não tem GPU: narração por <code>edge-tts</code> ou Kokoro (com validação de voz obrigatória) e imagens pela Agnes AI (US$ 0) no lugar do flux2-klein.</span></div></div>
+  <div class="phase"><div class="tag">1.12.3</div><div class="d"><strong>Explicativo, não reel</strong><span>Versão atual. Reel e short passam para o makeshorts com o explicavideos 9:16; narração 100% local com a voz do Nei (sem Edge TTS); checagem da narração por transcrição local; um protótipo aprovado antes de qualquer lote.</span></div></div>
+  <div class="phase"><div class="tag">1.11.3</div><div class="d"><strong>Rodar sem GPU</strong><span>Documenta os substitutos de quem não tem GPU: narração por <code>edge-tts</code> ou Kokoro (com validação de voz obrigatória) e imagens pela Agnes AI (US$ 0) no lugar do flux2-klein.</span></div></div>
 </div></section>
 
 <footer>
   <div class="wrap">
-    <div class="pill">HyperFrames</div><div class="pill">Chrome headless</div><div class="pill">FFmpeg</div><div class="pill">GSAP</div><div class="pill">inemavox · bella</div><div class="pill">Kokoro TTS</div><div class="pill">edge-tts</div><div class="pill">Agnes AI</div><div class="pill">Node 22+</div>
+    <div class="pill">HyperFrames</div><div class="pill">Chrome headless</div><div class="pill">FFmpeg</div><div class="pill">GSAP</div><div class="pill">inemavox · nei</div><div class="pill">Kokoro TTS</div><div class="pill">edge-tts</div><div class="pill">Agnes AI</div><div class="pill">Node 22+</div>
     <p style="margin-top:18px">video-explicativo · skill de vídeo explicativo PT-BR, 100% local ·
       <a href="https://github.com/inematds/video-explicativo">inematds/video-explicativo</a> ·
       <a href="https://inematds.github.io/skill-video-explicativo/">curso</a> ·

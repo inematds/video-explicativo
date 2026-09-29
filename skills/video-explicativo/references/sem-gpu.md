@@ -5,7 +5,7 @@ do fluxo default puxam hardware/serviço extra:
 
 | Peça | Default da casa | Por que pesa | Alternativa sem GPU |
 |---|---|---|---|
-| Narração | inemavox voz `bella` (chatterbox-vc) | clone de timbre roda em modelo neural → quer GPU | **edge-tts** (nuvem, 0 GPU) ou **Kokoro** (CPU) |
+| Narração | inemavox `chatterbox` local, voz `nei` | clone de timbre roda em modelo neural → quer GPU | **Kokoro** (CPU, local). **edge-tts** é serviço em nuvem: só com autorização explícita do usuário |
 | Imagens de cena | flux2-klein | difusão local → GPU/VRAM | **Agnes AI** (`imagens-agnes`, US$ 0) ou **fallback SVG** |
 
 Nada mais muda: roteiro, composição, lint/inspect e render seguem idênticos.

@@ -4,16 +4,18 @@ cd "$(dirname "$0")"
 mkdir -p audio txt
 
 # ============================================================
-#  Voz da narração
-#  DEFAULT: inemavox voz "bella" (clone via chatterbox-vc: Edge → timbre da bella).
-#  FALLBACK: Kokoro pf_dora (só se o inemavox/bella falhar ou não existir).
-#  Regra do usuário (Nei): narração = inemavox bella. Kokoro é rede de segurança.
+#  Voz da narração (1.12.3) — 100% local.
+#  DEFAULT: inemavox engine `chatterbox` + voz `nei` (conteúdo INEMA narrado pelo Nei).
+#  VOZ=rachel para a voz padrão global (inglesa: ouvir uma amostra em PT antes do vídeo inteiro).
+#  FALLBACK: Kokoro pf_dora (só se o inemavox falhar).
+#  NUNCA chatterbox-vc: ele gera a fala no Edge TTS (serviço em nuvem).
 # ============================================================
 INEMAVOX="${INEMAVOX:-$HOME/projetos/inemavox/tts_direct.py}"
-BELLA_REF="${BELLA_REF:-$HOME/projetos/timesmkt3/media/voice-refs/bella.wav}"
-TTS_PY="${TTS_PY:-python3}"               # roda o tts_direct.py; precisa de edge_tts (o sistema já tem)
-ENGINE="${ENGINE:-chatterbox-vc}"         # Edge → clona o timbre da bella (estável p/ narração longa)
-KOKORO_VOICE="${KOKORO_VOICE:-pf_dora}"   # fallback (voz PT-BR do Kokoro)
+VOZ="${VOZ:-nei}"
+REF="${REF:-$HOME/projetos/timesmkt3/media/voice-refs/$VOZ.wav}"
+TTS_PY="${TTS_PY:-python3}"
+ENGINE="chatterbox"
+KOKORO_VOICE="${KOKORO_VOICE:-pf_dora}"
 
 write() { printf '%s\n' "$2" > "txt/$1.txt"; }
 
@@ -27,18 +29,21 @@ write s6 "No nível avançado, uma Skill é muito mais que texto. Ela pode traze
 write s7 "Quer um exemplo real? Este próprio vídeo. Ele foi inteirinho construído por uma Skill chamada HyperFrames, que ensinou o Claude a transformar HTML em vídeo. Uma skill, um fluxo, um resultado."
 write s8 "Skills transformam o Claude Code num especialista sob medida. Comece simples, com um SKILL ponto M D. Depois evolua. Agora é com você."
 
-# ---- Geração: bella (inemavox) → fallback Kokoro ----
+# ---- Geração: inemavox chatterbox local → fallback Kokoro ----
 gen() {  # gen s1
   local id="$1" tmp
   tmp="$(mktemp -d)"
-  if [ -f "$BELLA_REF" ] && "$TTS_PY" "$INEMAVOX" \
+  if [ -f "$REF" ] && "$TTS_PY" "$INEMAVOX" \
         --text "$(cat "txt/$id.txt")" --lang pt \
-        --engine "$ENGINE" --ref "$BELLA_REF" --outdir "$tmp" >"$tmp/log" 2>&1 \
+        --engine "$ENGINE" --ref "$REF" --outdir "$tmp" >"$tmp/log" 2>&1 \
         && [ -f "$tmp/generated.wav" ]; then
     mv -f "$tmp/generated.wav" "audio/$id.wav"
-    echo "$id: bella (inemavox)"
+    # o chatterbox já gravou silêncio "com sucesso" no passado: medir o volume
+    mean=$(ffmpeg -nostdin -i "audio/$id.wav" -af volumedetect -f null - 2>&1 | sed -n 's/.*mean_volume: \(-\?[0-9.]*\) dB/\1/p')
+    echo "$id: $VOZ (inemavox chatterbox) mean=${mean}dB"
+    awk -v m="${mean:--99}" 'BEGIN{exit !(m < -50)}' && echo "  !! $id parece MUDO — regenerar"
   else
-    echo "$id: inemavox/bella indisponível -> fallback Kokoro $KOKORO_VOICE"
+    echo "$id: inemavox indisponível -> fallback Kokoro $KOKORO_VOICE"
     npx -y hyperframes tts "txt/$id.txt" --voice "$KOKORO_VOICE" --speed 0.98 --output "audio/$id.wav" >/dev/null 2>&1
   fi
   rm -rf "$tmp"

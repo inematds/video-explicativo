@@ -2,7 +2,7 @@
 
 Skill do Claude Code que cria **vídeos explicativos completos em PT-BR** a partir de um assunto — roteiro, narração TTS local, cenas animadas dark premium, captions e CTA do INEMA.CLUB, nos formatos **16:9** (YouTube) e **9:16** (Shorts/Reels).
 
-Stack: [HyperFrames](https://github.com/heygen-com/hyperframes) (HTML→MP4, Chrome headless + FFmpeg) + narração local com a voz `bella` (inemavox), Kokoro `pf_dora` como fallback. **Tudo roda na máquina, sem chave de API.**
+Stack: [HyperFrames](https://github.com/heygen-com/hyperframes) (HTML→MP4, Chrome headless + FFmpeg) + narração local pelo inemavox (`chatterbox`, voz `nei`), Kokoro `pf_dora` como fallback. **Tudo roda na máquina, sem chave de API.**
 
 - 📖 **Guia de uso:** https://inematds.github.io/video-explicativo/guia/
 - 🎓 **Curso sobre a skill:** https://inematds.github.io/skill-video-explicativo/
@@ -22,7 +22,7 @@ skills/video-explicativo/
   SKILL.md                        # a skill: fluxo, plano de cenas, regras de ouro
   CHANGELOG.md                    # histórico de versões (v1.yy.xxx)
   scripts/
-    narration-template.sh         # gera os WAVs (bella/inemavox → fallback Kokoro)
+    narration-template.sh         # gera os WAVs (inemavox chatterbox local, voz nei → fallback Kokoro)
     fetch-fonts.mjs               # baixa Sora/Inter/JetBrains Mono como .woff2 local
     composition-template.mjs      # gerador data-driven (SCENES[] + CTA) → index.html
   references/
@@ -50,7 +50,7 @@ Depois é só pedir: *"faz um vídeo explicativo sobre X"*.
 
 - Node 22+ e FFmpeg (no git-bash use `ffmpeg -nostdin`)
 - Chrome headless do HyperFrames: `npx hyperframes browser ensure`
-- TTS: inemavox (voz `bella`); fallback Kokoro — `pip install kokoro-onnx soundfile`
+- TTS: inemavox local (engine `chatterbox`, voz `nei`; nunca `chatterbox-vc`); fallback Kokoro — `pip install kokoro-onnx soundfile`
 - Diagnóstico: `npx hyperframes doctor`
 
 ### Sem GPU?
