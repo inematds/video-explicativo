@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+MUDOS=""
 cd "$(dirname "$0")"
 mkdir -p audio txt
 
@@ -41,7 +42,7 @@ gen() {  # gen s1
     # o chatterbox já gravou silêncio "com sucesso" no passado: medir o volume
     mean=$(ffmpeg -nostdin -i "audio/$id.wav" -af volumedetect -f null - 2>&1 | sed -n 's/.*mean_volume: \(-\?[0-9.]*\) dB/\1/p')
     echo "$id: $VOZ (inemavox chatterbox) mean=${mean}dB"
-    awk -v m="${mean:--99}" 'BEGIN{exit !(m < -50)}' && echo "  !! $id parece MUDO — regenerar"
+    awk -v m="${mean:--99}" 'BEGIN{exit !(m < -50)}' && { echo "  !! $id parece MUDO — regenerar"; MUDOS="$MUDOS $id"; }
   else
     echo "$id: inemavox indisponível -> fallback Kokoro $KOKORO_VOICE"
     npx -y hyperframes tts "txt/$id.txt" --voice "$KOKORO_VOICE" --speed 0.98 --output "audio/$id.wav" >/dev/null 2>&1
@@ -55,6 +56,7 @@ for f in $(ls txt/s*.txt 2>/dev/null | sort -V); do
   gen "$id"
 done
 
+[ -n "${MUDOS:-}" ] && { echo "REPROVADO: WAV mudo em$MUDOS"; exit 1; }
 echo "=== durações (alimente o campo audio de cada cena no build-index.mjs) ==="
 for f in $(ls audio/s*.wav 2>/dev/null | sort -V); do
   id="$(basename "$f" .wav)"

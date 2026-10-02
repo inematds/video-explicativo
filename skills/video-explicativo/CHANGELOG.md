@@ -2,6 +2,12 @@
 
 Versionamento: **`v1.yy.xxx`** — `yy` = recurso (feature), `xxx` = correção (bug).
 
+## 1.12.4 — verify_narration mais rígido (auditoria Astra P2-11)
+- Inventário txt/wav (cena sem áudio ou áudio órfão reprova); WAV mudo (< −50 dB) reprova no script e no `narration.sh`;
+  termos críticos curtos (ia, nei, não, sem, só, zero, grátis, club, inema) contam sempre; repetição no fim detectada também
+  por palavra única; texto esperado ausente é suspeita.
+- Docs: `edge-tts` só com autorização (sem GPU); "1:40–2:00" deixa de ser chamado de "cabe em Shorts".
+
 ## 1.12.3 — Não é ferramenta de reel; voz local; protótipo antes de lote
 Correção depois dos 5 "vídeos virais" reprovados em 28/09/2026 (análise em `~/projetos/wifi/ANALISE-ERROS-VIDEOS-VIRAIS-2026-09-29.md`
 e revisão do Codex Astra em `~/projetos/wifi/docs/revisao-astra-proposta-reels-2026-09-29.md`).

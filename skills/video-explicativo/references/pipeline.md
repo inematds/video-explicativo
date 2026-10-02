@@ -19,7 +19,7 @@
 ## Roteiro (SCRIPT.md)
 - **Nº de cenas dinâmico** (ver "Plano de cenas" no SKILL.md): o assunto define quantos beats entram. Range 4–12 de conteúdo + a CTA. Não trave em 6–9.
   - Arco de referência: hook → primeiro princípio → mecânica → conceito-chave → aplicação → avançado → exemplo real → fecho → **CTA INEMA.CLUB**. Funda beats se o tema for pequeno, desdobre se for grande.
-  - Default de duração quando o usuário não pede: ~1:40–2:00 (cabe em Shorts). Com duração-alvo: cenas ≈ `voz_alvo / ~12s`.
+  - Default de duração quando o usuário não pede: ~1:40–2:00 (explicativo curto; reel segue os perfis do makeshorts). Com duração-alvo: cenas ≈ `voz_alvo / ~12s`.
   - Override: se o usuário fixar o nº de cenas, use exatamente esse (conteúdo) + CTA.
 - Narração por cena: 1–3 frases curtas.
 - **Gancho de abertura (cena 1):** é o beat mais importante — os ~3s iniciais decidem a retenção (regra de ouro no SKILL.md). Abra **direto na tensão**, sem aquecimento (logo/"olá pessoal" fora). Padrões que param o scroll: **pergunta afiada** ("Por que 90% dos vídeos morrem nos 3 primeiros segundos?"), **número/contraste chocante**, **promessa concreta** ("Em 40s você monta um vídeo narrado sozinho"), **erro comum** ("Você está fazendo isso errado — e nem sabe"). O texto/imagem forte precisa estar **no primeiro segundo**, não depois da abertura.

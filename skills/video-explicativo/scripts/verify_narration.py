@@ -25,9 +25,25 @@ def norm(s):
 
 def main(proj):
     proj = Path(proj).resolve()
-    wavs = sorted((proj / "assets/audio").glob("s*.wav"), key=lambda p: int(re.sub(r"\D", "", p.stem) or 0))
+    key = lambda p: int(re.sub(r"\D", "", p.stem) or 0)
+    wavs = sorted((proj / "assets/audio").glob("s*.wav"), key=key)
+    txts = sorted((proj / "assets/txt").glob("s*.txt"), key=key)
     if not wavs:
         sys.exit(f"nenhum assets/audio/sN.wav em {proj}")
+    # inventário: toda cena com texto precisa de WAV e vice-versa (cena muda ou áudio órfão reprovam)
+    sem_wav = sorted({t.stem for t in txts} - {w.stem for w in wavs}, key=lambda n: int(n[1:]))
+    sem_txt = sorted({w.stem for w in wavs} - {t.stem for t in txts}, key=lambda n: int(n[1:]))
+    if sem_wav or sem_txt:
+        print(f"⚠️  inventário: sem WAV {sem_wav or '-'} · sem TXT {sem_txt or '-'}")
+    # silêncio: WAV com volume médio abaixo de -50 dB é mudo (o chatterbox já gravou silêncio "com sucesso")
+    mudos = []
+    for w in wavs:
+        r = subprocess.run(["ffmpeg", "-nostdin", "-i", w, "-af", "volumedetect", "-f", "null", "-"], capture_output=True, text=True)
+        m = re.search(r"mean_volume: (-?[\d.]+) dB", r.stderr)
+        if not m or float(m.group(1)) < -50:
+            mudos.append(w.stem)
+    if mudos:
+        print(f"⚠️  mudos (volume < -50 dB): {mudos}")
     tmp = Path(tempfile.mkdtemp(prefix="verify-narr-"))
     sil = tmp / "sil.wav"
     subprocess.run(["ffmpeg", "-nostdin", "-y", "-loglevel", "error", "-f", "lavfi", "-i", "anullsrc=r=16000:cl=mono",
@@ -59,9 +75,13 @@ def main(proj):
         want = txtf.read_text(encoding="utf-8").strip() if txtf.exists() else ""
         got = " ".join(heard[name])
         wn, gn = norm(want), norm(got)
-        faltam = [w for w in wn if len(w) > 3 and w not in gn]
-        rep = len(gn) > 4 and gn[-2:] == gn[-4:-2]
-        flag = (not gn) or rep or (wn and len(faltam) / max(1, len([w for w in wn if len(w) > 3])) > 0.25)
+        # termos críticos: palavras curtas que mudam o sentido (ia, nei, não, sem, só, zero…) contam sempre
+        CRIT = {"ia", "nei", "nao", "sem", "so", "zero", "gratis", "club", "inema"}
+        rel = [w for w in wn if len(w) > 3 or w in CRIT]
+        faltam = [w for w in rel if w not in gn]
+        crit_faltam = [w for w in faltam if w in CRIT]
+        rep = len(gn) > 4 and (gn[-2:] == gn[-4:-2] or gn[-1] == gn[-2])
+        flag = (not gn) or (not wn) or rep or bool(crit_faltam) or (rel and len(faltam) / max(1, len(rel)) > 0.25)
         suspeitas += bool(flag)
         print(f"{'⚠️ ' if flag else '✅'} {name}\n   roteiro: {want}\n   ouviu:   {got or '(nada)'}")
         if faltam:
@@ -69,7 +89,7 @@ def main(proj):
         if rep:
             print("   repetição no fim (balbucio do TTS?) — gere outro take")
     print(f"\n{suspeitas} cena(s) suspeita(s) de {len(bounds)}. Mesmo sem suspeitas: o usuário ouve antes do render final.")
-    sys.exit(1 if suspeitas else 0)
+    sys.exit(1 if (suspeitas or sem_wav or sem_txt or mudos) else 0)
 
 
 if __name__ == "__main__":

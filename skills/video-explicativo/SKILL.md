@@ -1,6 +1,6 @@
 ---
 name: video-explicativo
-version: 1.12.3
+version: 1.12.4
 description: Cria vídeos EXPLICATIVOS narrados de 1–3 min em PT-BR (HTML→MP4 via HyperFrames) a partir de um assunto — roteiro, narração TTS local, cenas animadas dark premium, captions e CTA do INEMA.CLUB, em 16:9 (e 9:16 como versão vertical do mesmo explicativo). Use para "vídeo explicativo", "vídeo sobre X", "mini tutorial em vídeo", "vídeo do INEMA" narrado. NÃO use para reel/short/viral/TikTok — isso é a skill makeshorts (roteiro + QA) com o explicavideos 9:16 (avatar do Nei) como motor.
 ---
 
@@ -21,7 +21,7 @@ Padrão do usuário (Nei): **PT-BR**, **dark premium** (accent âmbar), gerar **
 - Chrome headless do HyperFrames: `npx hyperframes browser ensure`.
 - TTS: **inemavox `chatterbox` local** — `~/projetos/inemavox/tts_direct.py --engine chatterbox --ref ~/projetos/timesmkt3/media/voice-refs/<nei|rachel>.wav`. **Não usar `chatterbox-vc`**: ele passa pelo Edge TTS (nuvem). `rachel` é voz inglesa — em PT pode sair com sotaque e errar nomes ("inema"→"enema"); gere uma amostra e peça o usuário ouvir antes do vídeo inteiro. **Fallback Kokoro** (`pf_dora`) só se o inemavox falhar. Ver [scripts/narration-template.sh](scripts/narration-template.sh) e a checagem [scripts/verify_narration.py](scripts/verify_narration.py).
 - Verifique com `npx hyperframes doctor` se algo falhar.
-- **Máquina sem GPU (ou sem inemavox / sem flux2-klein)?** O pipeline não exige GPU. Troque a narração por **edge-tts** (nuvem, sem chave) ou **Kokoro** (offline, CPU) — sempre **listando e testando as vozes** antes de gerar o vídeo inteiro — e as imagens por **Agnes AI** (`~/projetos/imagens-agnes/gerar.py`, US$ 0) ou pelo fallback SVG. Receitas, vozes e regras medidas em [references/sem-gpu.md](references/sem-gpu.md).
+- **Máquina sem GPU (ou sem inemavox / sem flux2-klein)?** O pipeline não exige GPU. Troque a narração por **Kokoro** (offline, CPU); **edge-tts** é serviço em nuvem e só entra com autorização explícita do usuário — sempre **listando e testando as vozes** antes de gerar o vídeo inteiro — e as imagens por **Agnes AI** (`~/projetos/imagens-agnes/gerar.py`, US$ 0) ou pelo fallback SVG. Receitas, vozes e regras medidas em [references/sem-gpu.md](references/sem-gpu.md).
 
 ## Plano de cenas (quantas cenas?)
 
