@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>explainer-video — from topic to narrated video, no API key required</title>
+<meta content="Skill that creates complete explanatory videos in PT-BR (HTML→MP4 via HyperFrames) from a topic: script, local TTS narration, animated dark premium scenes, captions, and INEMA.CLUB CTA, in 16:9 and 9:16." name="description"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#0c0c10; --bg2:#14141b; --card:#16161e; --line:#272730;
+    --txt:#e9e9ee; --mut:#9a9aa6; --amb:#E2A23B; --amb2:#f0c070; --sky:#38bdf8; --pro:#cbd5e1;
+    color-scheme:dark;
+  }
+  body.light{
+    --bg:#f6f7f9; --bg2:#eceef2; --card:#ffffff; --line:#e1e3ea;
+    --txt:#1a1a22; --mut:#5b5b68; --amb:#b9791d; --amb2:#a16207; --sky:#0369a1; --pro:#b45309;
+    color-scheme:light;
+  }
+  body.light .hero .glow{opacity:.5}
+  body.light pre{background:#0e0e14;color:#d6d6e0}
+  body.light pre .c{color:#8a8a98}
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.65 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:Sora,sans-serif;line-height:1.15;margin:0}
+  a{color:var(--amb);text-decoration:none}
+  code,pre{font-family:"JetBrains Mono",monospace}
+  .wrap{max-width:1160px;margin:0 auto;padding:0 22px}
+  .mut{color:var(--mut)} .amb{color:var(--amb)}
+  .chip{display:inline-block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amb);font-weight:600;font-family:Sora}
+  nav{position:sticky;top:0;z-index:30;backdrop-filter:blur(12px);background:rgba(12,12,16,.78);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;gap:22px;height:60px}
+  nav .brand{display:flex;align-items:center;gap:8px;font-family:Sora;font-weight:800;letter-spacing:-.02em;color:var(--amb)}
+  nav .brand .emoji{font-size:1.25rem}
+  nav .sep{color:var(--mut);opacity:.45}
+  nav .inema{color:var(--sky);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .inema:hover{filter:brightness(1.15)}
+  nav .pro{color:var(--pro);font-weight:600;font-size:.88rem;font-family:Sora}
+  nav .pro:hover{filter:brightness(1.15)}
+  nav .clubpro{display:inline-flex;align-items:center;gap:6px}
+  nav .links{margin-left:auto;display:flex;align-items:center;gap:20px;font-size:.92rem}
+  nav .links a.sec{color:var(--mut)} nav .links a.sec:hover{color:var(--txt)}
+  .tgl{background:var(--bg2);border:1px solid var(--line);color:var(--txt);width:38px;height:38px;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.05rem}
+  .tgl:hover{border-color:var(--amb)}
+  .btn{display:inline-block;background:var(--amb);color:#1a1206;font-weight:600;padding:.6em 1.05em;border-radius:10px;font-family:Sora}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  @media(max-width:760px){nav .links a.sec{display:none}}
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  .hero .glow{position:absolute;inset:-40% -20% auto auto;width:70%;height:600px;background:radial-gradient(closest-side,rgba(226,162,59,.22),transparent 70%);pointer-events:none}
+  .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:74px 22px}
+  .hero h1{font-size:clamp(2.2rem,5vw,3.5rem);font-weight:800;letter-spacing:-.025em}
+  .hero p.lead{font-size:1.18rem;color:var(--mut);margin:1.1em 0 1.6em;max-width:34ch}
+  .hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+  .hero figure{margin:0;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 30px 80px -30px #000}
+  .hero figure img{width:100%;display:block}
+  @media(max-width:780px){.hero .wrap{grid-template-columns:1fr;padding:48px 22px}}
+  section{padding:62px 0;border-bottom:1px solid var(--line)}
+  section h2{font-size:clamp(1.5rem,3.4vw,2.1rem);font-weight:800;letter-spacing:-.02em}
+  section .sub{color:var(--mut);margin:.6em 0 2em;max-width:62ch}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)} .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:820px){.g3,.g4{grid-template-columns:1fr 1fr}}
+  @media(max-width:540px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .card h3{font-size:1.05rem;margin-bottom:.4em}
+  .card p{color:var(--mut);font-size:.92rem;margin:0}
+  .num{display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;border-radius:8px;background:rgba(226,162,59,.14);color:var(--amb);font-family:Sora;font-weight:800;font-size:.9rem;margin-bottom:.7em}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+  .flow span{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:.45em .9em;font-size:.85rem;font-family:Sora;font-weight:600}
+  .flow .arr{color:var(--amb);border:none;background:none;padding:0 .1em}
+  pre{background:#0a0a0e;border:1px solid var(--line);border-radius:12px;padding:16px 18px;overflow:auto;font-size:.86rem;line-height:1.6;color:#d6d6e0}
+  pre .c{color:#6f6f7c} pre .k{color:var(--amb2)} pre .s{color:#9ece6a}
+  .step{display:grid;grid-template-columns:46px 1fr;gap:16px;margin-bottom:26px}
+  .step .b{width:46px;height:46px;border-radius:12px;background:var(--amb);color:#1a1206;font-family:Sora;font-weight:800;font-size:1.25rem;display:flex;align-items:center;justify-content:center}
+  .step h3{font-size:1.12rem;margin-bottom:.3em}
+  .step p{color:var(--mut);margin:.2em 0 .7em}
+  .ex{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:680px){.ex{grid-template-columns:1fr}}
+  .ex figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--line)}
+  .ex figure img{width:100%;display:block}
+  .ex figcaption{padding:12px 14px;font-size:.88rem;color:var(--mut);background:var(--card)}
+  .phase{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+  .phase:last-child{border:none}
+  .phase .tag{flex:0 0 92px;font-family:Sora;font-weight:800;color:var(--amb)}
+  .phase .d strong{display:block;margin-bottom:.2em}
+  .phase .d span{color:var(--mut);font-size:.92rem}
+  footer{padding:46px 0;text-align:center;color:var(--mut);font-size:.9rem}
+  .pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.3em .8em;font-size:.78rem;color:var(--mut);margin:0 4px}
+</style>
+<link href="https://inematds.github.io/video-explicativo/guia/" hreflang="pt-BR" rel="alternate"/><link href="https://inematds.github.io/video-explicativo/guia/en/" hreflang="en" rel="alternate"/><link href="https://inematds.github.io/video-explicativo/guia/es/" hreflang="es" rel="alternate"/></head>
+<body><div class="inema-lang" style="position:fixed;right:14px;bottom:14px;z-index:9999;display:flex;gap:2px;padding:4px;border-radius:10px;background:rgba(12,12,16,.82);border:1px solid rgba(226,162,59,.45);font:600 12px/1 Sora,Inter,system-ui,sans-serif;backdrop-filter:blur(8px)" translate="no"><a href="../" hreflang="pt-BR" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">PT</a><a href="./" hreflang="en" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#1a1206;background:#E2A23B">EN</a><a href="../es/" hreflang="es" style="padding:6px 8px;border-radius:7px;text-decoration:none;color:#e9e9ee">ES</a></div>
+<nav><div class="wrap">
+<a class="brand" href="#top"><span class="emoji">🎬</span> explainer-video</a>
+<span class="sep">|</span>
+<span class="clubpro">
+<a class="inema" href="https://inema.club" rel="noopener" target="_blank">INEMA.CLUB</a>
+<span class="sep">-</span>
+<a class="pro" href="https://inema.pro" rel="noopener" target="_blank">PRO</a>
+</span>
+<div class="links">
+<a class="sec" href="#oque">What it is</a>
+<a class="sec" href="#fluxo">How it works</a>
+<a class="sec" href="#guia">User guide</a>
+<a class="sec" href="#exemplos">Examples</a>
+<a class="sec" href="#roadmap">Roadmap</a>
+<button aria-label="Switch theme" class="tgl" id="themeToggle" title="Switch theme">🌙</button>
+<a class="btn" href="https://github.com/inematds/video-explicativo" rel="noopener" target="_blank">GitHub</a>
+</div>
+</div></nav>
+<header class="hero" id="top">
+<div class="glow"></div>
+<div class="wrap">
+<div>
+<span class="chip">Skill · Claude Code · HTML→MP4</span>
+<h1>From the subject to the <span class="amb">narrated video</span>, no API key.</h1>
+<p class="lead">You provide a topic. The skill writes the script, records the voiceover, animates the scenes, and renders MP4s in 16:9 and 9:16 — all on your machine.</p>
+<div class="cta">
+<a class="btn" href="#guia">Start the guide</a>
+<a class="btn ghost" href="https://github.com/inematds/video-explicativo" rel="noopener" target="_blank">View on GitHub</a>
+</div>
+</div>
+<figure><img alt="video-explicativo project cover" src="../assets/hero.png"/></figure>
+</div>
+</header>
+<section id="oque"><div class="wrap">
+<span class="chip">What it is</span>
+<h2>A skill that packages the entire explainer video pipeline</h2>
+<p class="sub">It’s not an AI video generator. It’s a deterministic pipeline: animated HTML + headless Chrome + FFmpeg, orchestrated by <a href="https://github.com/heygen-com/hyperframes" rel="noopener" target="_blank">HyperFrames</a>, with local TTS narration. The result is always PT-BR, premium dark amber, and ends with the INEMA.CLUB CTA.</p>
+<div class="grid g3">
+<div class="card"><h3>🔒 100% local, no API key</h3><p>Headless Chrome + FFmpeg render the video; the narration comes from local inemavox (engine <code>chatterbox</code>, voice <code>nei</code>) with Kokoro <code>pf_dora</code> as a fallback. Nothing leaves the machine.</p></div>
+<div class="card"><h3>📐 Data-driven, dynamic number of scenes</h3><p>The generator reads the array <code>SCENES[]</code>: one entry per beat in the script. A healthy range is 4–12 content scenes—the subject decides, not a fixed template.</p></div>
+<div class="card"><h3>📱 16:9 and 9:16 from the same base</h3><p>The same generator writes both formats (<code>--vertical</code>: vertical version of the explainer—the real reel is made with makeshorts + explicavideos 9:16), with app UI safe zones and a persistent 2-line title in vertical format.</p></div>
+</div>
+</div></section>
+<section id="fluxo"><div class="wrap">
+<span class="chip">How it works</span>
+<h2>Eight steps, always in this order</h2>
+<p class="sub">Timing is the single source of truth: each scene declares the REAL duration of its WAV (measured with <code>ffprobe</code>), and the generator derives both the <code>data-start/duration</code> as well as tween timing — audio and animation never drift out of sync.</p>
+<div class="flow">
+<span>Script</span><span class="arr">→</span>
+<span>Text review</span><span class="arr">→</span>
+<span>Project</span><span class="arr">→</span>
+<span>Sources</span><span class="arr">→</span>
+<span>Narration</span><span class="arr">→</span>
+<span>Composition</span><span class="arr">→</span>
+<span>Validate</span><span class="arr">→</span>
+<span>Render</span>
+</div>
+<div class="grid g3" style="margin-top:30px">
+<div class="card"><h3>✍️ Text (1–2)</h3><p>Script with a hook in scene 1 and a review in two forms per sentence: <b>screen</b> (PT-BR with accents, English in its original spelling) and <b>speaks</b> (acronyms expanded, English rendered phonetically — <code>deploy</code> → “deploy”).</p></div>
+<div class="card"><h3>🎙️ Audio (3–5)</h3><p>Project created in <code>~/projetos/output/&lt;nome&gt;/</code>, fonts downloaded as <code>.woff2</code> locally, and one WAV per scene generated by <code>narration.sh</code>.</p></div>
+<div class="card"><h3>🎞️ Video (6–8)</h3><p>Composition using the motion vocabulary <code>M.*</code>, lint + layout inspection, render in <code>draft</code> to check and <code>high</code> to deliver.</p></div>
+</div>
+</div></section>
+<section id="pre"><div class="wrap">
+<span class="chip">Prerequisites</span>
+<h2>What needs to be on the machine</h2>
+<p class="sub">Everything runs locally. If something fails, <code>npx hyperframes doctor</code> points out what’s missing.</p>
+<div class="grid g3">
+<div class="card"><h3>Node 22+ and FFmpeg</h3><p>FFmpeg at <code>C:\ffmpeg\bin</code>. In git-bash, always use <code>-nostdin</code>, otherwise the command exits with code 0 without generating a file.</p><pre><span class="c"># check the version</span>
+<span class="k">node</span> -v
+<span class="k">ffmpeg</span> -nostdin -version</pre></div>
+<div class="card"><h3>Headless Chrome (HyperFrames)</h3><p>HyperFrames renders the HTML in its own headless Chrome — download it once.</p><pre><span class="c"># download the HyperFrames browser</span>
+<span class="k">npx</span> hyperframes browser ensure
+
+<span class="c"># general diagnostics</span>
+<span class="k">npx</span> hyperframes doctor</pre></div>
+<div class="card"><h3>TTS: local inemavox (Nei’s voice)</h3><p>House default — <b>requires GPU</b>. <code>python3</code> of the system runs the <code>tts_direct.py</code>; the conda env <code>chatterbox</code> is called internally for timbre transfer.</p><pre><span class="c"># optional fallback (Kokoro pf_dora)</span>
+<span class="k">pip</span> install kokoro-onnx soundfile</pre></div>
+</div>
+<h3 style="margin-top:2.2rem">No GPU? You can still run everything this way</h3>
+<p class="sub">The render (headless Chrome + FFmpeg) <b>never</b> needed a GPU. Only two parts of the default workflow require extra hardware — and both have direct substitutes.</p>
+<div class="grid g3">
+<div class="card"><h3>🎙️ Narration → edge-tts</h3><p>Synthesizes in Microsoft’s cloud, with no key or local model. <b>List and listen to the voices first</b> before generating the full video — changing voices midway means rework.</p><pre><span class="c"># install and view the PT-BR voices</span>
+<span class="k">pip</span> install edge-tts
+<span class="k">edge-tts</span> --list-voices | grep pt-BR
+
+<span class="c"># sample 1 sentence to listen to</span>
+<span class="k">edge-tts</span> --voice pt-BR-FranciscaNeural \
+  --text "Teste de voz." --write-media amostra.mp3</pre></div>
+<div class="card"><h3>🔌 Offline narration → Kokoro</h3><p>Small ONNX model, runs on <b>CPU</b>, no internet. PT voices: <code>pf_dora</code> (F), <code>pm_alex</code> e <code>pm_santa</code> (M). Same rule: generate one sentence with each candidate and choose by listening.</p><pre><span class="k">pip</span> install kokoro-onnx soundfile
+
+<span class="c"># the video timing comes from the actual audio</span>
+<span class="k">ffprobe</span> -v error -show_entries format=duration \
+  -of csv=p=0 assets/audio/s1.wav</pre></div>
+<div class="card"><h3>🖼️ Images → Agnes AI</h3><p>Instead of flux2-klein (local diffusion, GPU): the CLI <code>imagens-agnes</code> calls the Agnes API — <b>US$ 0, no credits</b>, nothing runs on your machine. Prompt <b>in English</b> (PT gets caught by the filter), at most 2 references, and download them right away (the URL expires).</p><pre><span class="k">cd</span> ~/projetos/imagens-agnes
+<span class="k">python3</span> gerar.py "dark premium abstract \
+  data landscape, amber accent" \
+  --ratio 16:9 --size 2K -o s3.png</pre></div>
+</div>
+<p class="sub" style="margin-top:1rem">Without Agnes or a GPU, the <b>SVG fallback</b> still applies: the house style is already vector/CSS, images are an enhancement and not a requirement. Full details in <code>references/sem-gpu.md</code>.</p>
+</div></section>
+<section id="guia"><div class="wrap">
+<span class="chip">User guide · step by step</span>
+<h2>From the subject to the MP4</h2>
+<p class="sub">The commands below are the skill’s actual commands. All content — project, assets, audio, <code>index.html</code> and the final MP4s — all live in one folder: <code>~/projetos/output/&lt;nome&gt;/</code>.</p>
+<div class="step"><div class="b">1</div><div>
+<h3>Write the script (SCRIPT.md)</h3>
+<p>One beat per scene, 1–3 short sentences (~8–15s of voice each). Scene 1 opens <b>directly in the hook</b> — a sharp question, shocking number, concrete promise, or common mistake. No logo, no “hey everyone”: the first ~3s determine retention. Default duration when nobody specifies one: ~1:40–2:00.</p>
+<pre><span class="c"># reference arc (expand or split beats according to the topic)</span>
+<span class="c"># hook → first principle → mechanics → key concept →</span>
+<span class="c"># application → advanced → real example → closing → INEMA.CLUB CTA</span></pre>
+</div></div>
+<div class="step"><div class="b">2</div><div>
+<h3>Review the text before generating audio and slides</h3>
+<p>Each sentence has two forms. <b>Screen</b> (<code>caption</code> + literals in <code>html(p)</code>): PT-BR with accents checked word by word, English terms in their original spelling. <b>Speech</b> (<code>txt/sN.txt</code>): acronyms and URLs expanded, English rewritten phonetically — TTS phonemizes based on the written spelling.</p>
+<pre><span class="c"># screen  →</span> Toda skill começa com o SKILL.md
+<span class="c"># speech  →</span> Toda skiu começa com o SKILL ponto M D
+
+<span class="c"># pronunciation guide: deploy→"duh-ploy" · design→"dih-zine" · framework→"fraym-work"</span></pre>
+</div></div>
+<div class="step"><div class="b">3</div><div>
+<h3>Create the project in a single folder</h3>
+<p>HyperFrames init with the example <code>blank</code> (the skill has its own house style). Copy the <code>design.md</code> from the house style reference to the project root.</p>
+<pre><span class="k">cd</span> ~/projetos/output
+<span class="k">npx</span> hyperframes init &lt;nome&gt; --example blank --non-interactive</pre>
+</div></div>
+<div class="step"><div class="b">4</div><div>
+<h3>Download the fonts locally</h3>
+<p>Sora, Inter, and JetBrains Mono as <code>.woff2</code> (subset latin) + <code>fonts.css</code>. Never use Google Fonts via CDN: they disappear from the render.</p>
+<pre><span class="c"># copy scripts/fetch-fonts.mjs into the project and run it</span>
+<span class="k">node</span> fetch-fonts.mjs   <span class="c"># → assets/fonts/*.woff2 + fonts.css</span></pre>
+</div></div>
+<div class="step"><div class="b">5</div><div>
+<h3>Generate the narration (nei voice, local)</h3>
+<p>Copy <code>scripts/narration-template.sh</code> as <code>assets/narration.sh</code>, write the <code>txt/sN.txt</code> in forma-fala and run it. It iterates over all <code>sN.txt</code> if any exist, tries the voice <code>nei</code> in local inemavox and falls back to Kokoro per scene if it fails.</p>
+<pre><span class="k">bash</span> assets/narration.sh   <span class="c"># → assets/audio/sN.wav</span>
+
+<span class="c"># measure the REAL duration of each WAV (goes in the scene's `audio` field)</span>
+<span class="k">ffprobe</span> -v error -show_entries format=duration \
+  -of default=noprint_wrappers=1:nokey=1 assets/audio/s1.wav</pre>
+</div></div>
+<div class="step"><div class="b">6</div><div>
+<h3>Compose the scenes</h3>
+<p>Copy <code>scripts/composition-template.mjs</code> as <code>build-index.mjs</code> and edit the array <code>SCENES[]</code> — one entry per scene, each one <code>{ audio, caption, html(p), anim(at,p) }</code>. The INEMA.CLUB CTA is already attached as the final scene. In 9:16, set <code>TITLE</code> with persona + hook.</p>
+<pre><span class="k">const</span> TITLE = { l1: <span class="s">"PROFISSIONAL &lt;b&gt;LIBERAL&lt;/b&gt;"</span>,
+                l2: <span class="s">"por que ainda faz tudo &lt;b&gt;sozinho?&lt;/b&gt;"</span> };
+
+<span class="c">// the CTA is always last — do not remove</span>
+<span class="k">const</span> ALL = [...SCENES, CTA];</pre>
+</div></div>
+<div class="step"><div class="b">7</div><div>
+<h3>Validate before rendering</h3>
+<p>Lint must report 0 errors and inspect must report 0 layout issues. Don’t leave two <code>index*.html</code> in the root — lint flags <code>multiple_root_compositions</code>.</p>
+<pre><span class="k">npx</span> hyperframes lint                  <span class="c"># 0 errors</span>
+<span class="k">npx</span> hyperframes inspect --samples 16  <span class="c"># 0 layout issues</span></pre>
+</div></div>
+<div class="step"><div class="b">8</div><div>
+<h3>Render both formats</h3>
+<p>Render right after generating each mode — the generator always writes <code>index.html</code>. One file per format, and only that: the render is the deliverable, with no compressed copy alongside it. Check frames in <code>draft</code> before the <code>high</code>.</p>
+<pre><span class="k">node</span> build-index.mjs           &amp;&amp; <span class="k">npx</span> hyperframes render --quality high --output &lt;nome&gt;-16x9.mp4
+<span class="k">node</span> build-index.mjs --vertical &amp;&amp; <span class="k">npx</span> hyperframes render --quality high --output &lt;nome&gt;-9x16.mp4
+
+<span class="c"># extract a frame for review</span>
+<span class="k">ffmpeg</span> -nostdin -y -ss 12 -i &lt;nome&gt;-16x9.mp4 -vframes 1 -update 1 frame.png</pre>
+</div></div>
+</div></section>
+<section id="exemplos"><div class="wrap">
+<span class="chip">Examples</span>
+<h2>What the skill has already produced</h2>
+<p class="sub">Real cases that validated each pipeline feature—and the course published about the skill itself.</p>
+<div class="grid g2">
+<div class="card">
+<h3>🎓 Course: Skills in Claude Code</h3>
+<p>The example that comes with the <code>narration-template.sh</code>: 8 scenes + CTA explaining what Skills are, from <code>SKILL.md</code> to progressive disclosure. The complete course on this skill is published at <a href="https://inematds.github.io/skill-video-explicativo/" rel="noopener" target="_blank">skill-explainer-video</a>.</p>
+</div>
+<div class="card">
+<h3>💼 “Liberal v1” pilot</h3>
+<p>Case that validated the persistent 2-line title in 9:16 (v1.10.3): <code>l1</code> = "INDEPENDENT PROFESSIONAL" (persona), <code>l2</code> = "why are you still doing everything yourself?" (hook). Fixed at the top for the entire video, disappearing at the CTA.</p>
+</div>
+<div class="card">
+<h3>📊 hormozi-12-tips</h3>
+<p>Origin of the 9:16 safe zones (v1.5.0/1.5.1): message in the middle, media as a top band entering from the right, caption hidden in vertical — clear space for the app UI.</p>
+</div>
+<div class="card">
+<h3>🎞️ Variations (2–3 versions)</h3>
+<p>A variation is another angle on the same topic — educational vs. real case vs. contrarian vs. list — with its own script, hook, and narration. Each one generates both formats: <code>&lt;nome&gt;-v1-16x9.mp4</code>, <code>&lt;nome&gt;-v2-16x9.mp4</code>…</p>
+</div>
+</div>
+</div></section>
+<section id="roadmap"><div class="wrap">
+<span class="chip">Roadmap</span>
+<h2>How the skill reached 1.12.3</h2>
+<p class="sub">Versioning <code>v1.yy.xxx</code> — <code>yy</code> = feature, <code>xxx</code> = correction. Full history in <a href="https://github.com/inematds/video-explicativo/blob/main/skills/video-explicativo/CHANGELOG.md" rel="noopener" target="_blank">CHANGELOG.md</a>.</p>
+<div class="phase"><div class="tag">1.0.0</div><div class="d"><strong>Initial release</strong><span>HTML→MP4 pipeline (HyperFrames + local Kokoro TTS), dark premium amber house style, 16:9 and 9:16.</span></div></div>
+<div class="phase"><div class="tag">1.2.0</div><div class="d"><strong>Data-driven scenes + mid-scene activity</strong><span>The number of scenes now comes from the script (<code>SCENES[]</code>), CTA attached automatically and Ken Burns camera motion in every scene — the end of the slideshow.</span></div></div>
+<div class="phase"><div class="tag">1.3.0</div><div class="d"><strong>Motion language</strong><span>Vocabulary <code>M.*</code> (<code>reveal/sweep/type/float/pulse/glow/countUp</code>) instead of improvised tweens, with smaller movements in 9:16.</span></div></div>
+<div class="phase"><div class="tag">1.4.0</div><div class="d"><strong>Transitions between scenes</strong><span>Map <code>TRANS</code> in GSAP: <code>fade</code> (default), <code>push</code>, <code>slideUp</code>, <code>zoom</code>, <code>wipe</code>, <code>fadeBlack</code> — special effects only at 2–3 key moments.</span></div></div>
+<div class="phase"><div class="tag">1.5.x</div><div class="d"><strong>Safe zones, SVG fallback, and single output</strong><span>Validated vertical layout, raster images are optional (SVG covers it), the tail end changes, and there’s one MP4 per format — no duplicate <code>-FINAL</code>.</span></div></div>
+<div class="phase"><div class="tag">1.6.3</div><div class="d"><strong>Text review + English pronunciation</strong><span>New step before the WAVs: two forms per sentence (on-screen vs. spoken) and a phonetic English lexicon.</span></div></div>
+<div class="phase"><div class="tag">1.7.3</div><div class="d"><strong>Hook, audio under the voice, and readability</strong><span>Four behaviors become the contract: opening hook, low music (<code>MUSIC_VOL ~0.14</code>), scrim/blur/panel beneath text, and what counts as a variation.</span></div></div>
+<div class="phase"><div class="tag">1.8.3</div><div class="d"><strong>bella voice as default</strong><span>Narration now uses the house voice via inemavox (<code>chatterbox-vc</code>); Kokoro <code>pf_dora</code> automatically becomes the fallback for each scene.</span></div></div>
+<div class="phase"><div class="tag">1.10.3</div><div class="d"><strong>9:16 title in 2 lines</strong><span><code>TITLE = { l1, l2 }</code> — persona + curiosity, fixed at the top of the vertical frame and disappearing at the CTA, closing the retention loop.</span></div></div>
+<div class="phase"><div class="tag">1.12.3</div><div class="d"><strong>Explainer, not a reel</strong><span>Current version. Reel and short now go through makeshorts with explicavideos 9:16; 100% local narration with Nei’s voice (no Edge TTS); narration checked with local transcription; one prototype approved before any batch.</span></div></div>
+<div class="phase"><div class="tag">1.11.3</div><div class="d"><strong>Run without a GPU</strong><span>Documents alternatives for those without a GPU: narration via <code>edge-tts</code> or Kokoro (with required voice validation) and images via Agnes AI (US$ 0) instead of flux2-klein.</span></div></div>
+</div></section>
+<footer>
+<div class="wrap">
+<div class="pill">HyperFrames</div><div class="pill">Headless Chrome</div><div class="pill">FFmpeg</div><div class="pill">GSAP</div><div class="pill">inemavox · nei</div><div class="pill">Kokoro TTS</div><div class="pill">edge-tts</div><div class="pill">Agnes AI</div><div class="pill">Node 22+</div>
+<p style="margin-top:18px">explainer-video · PT-BR explainer video skill, 100% local ·
+      <a href="https://github.com/inematds/video-explicativo">inematds/video-explicativo</a> ·
+      <a href="https://inematds.github.io/skill-video-explicativo/">course</a> ·
+      <a href="https://inema.club">INEMA.CLUB</a></p>
+</div>
+</footer>
+<script>
+  (function(){
+    var KEY='video-explicativo-theme';
+    var b=document.body, t=document.getElementById('themeToggle');
+    if(localStorage.getItem(KEY)==='light'){ b.classList.add('light'); t.textContent='☀️'; }
+    t.addEventListener('click',function(){
+      var light=b.classList.toggle('light');
+      t.textContent=light?'☀️':'🌙';
+      localStorage.setItem(KEY, light?'light':'dark');
+    });
+  })();
+</script>
+</body>
+</html>
